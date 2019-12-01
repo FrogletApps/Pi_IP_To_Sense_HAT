@@ -8,24 +8,32 @@ sense = SenseHat()
 ipArray = []
 ipBinary = []
 
-# Create the binary digits (in green)
-# Y=1, N=0
-Y = [0,255,0]
+# Create the binary digits, dot and blank
+#Power of the LED (between 0 and 255)
+P = 255
+# G = Green, R = Red, B = Blue, N = off
+G = [0,P,0]
+R = [P,0,0]
+B = [0,0,P]
 N = [0,0,0]
-zero   = [N,N,N,N]
-one    = [N,N,N,Y]
-two    = [N,N,Y,N]
-three  = [N,N,Y,Y]
-four   = [N,Y,N,N]
-five   = [N,Y,N,Y]
-six    = [N,Y,Y,N]
-seven  = [N,Y,Y,Y]
-eight  = [Y,N,N,N]
-nine   = [Y,N,N,Y]
 
-# Dot will be in blue
-Y = [0,0,255]
-dot    = [Y,Y,Y,Y]
+#Digits are green
+digits = [
+	[N,N,N,N], #0
+	[N,N,N,G], #1
+	[N,N,G,N], #2
+	[N,N,G,G], #3
+	[N,G,N,N], #4
+	[N,G,N,G], #5
+	[N,G,G,N], #6
+	[N,G,G,G], #7
+	[G,N,N,N], #8
+	[G,N,N,G]  #9
+]
+#Dot is blue
+dot    = [B,B,B,B]
+#Blank is red
+blank = [R,R,R,R]
 
 #Get the IP address (by making connection to google)
 s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -37,50 +45,17 @@ s.close()
 
 #find the right binary digit to match the decimal
 for digit in ipArray:
-	if digit == "0":
-		ipBinary = ipBinary + zero
-	elif digit == "1":
-		ipBinary = ipBinary + one
-	elif digit == "2":
-		ipBinary = ipBinary + two
-	elif digit == "3":
-		ipBinary = ipBinary + three
-	elif digit == "4":
-		ipBinary = ipBinary + four
-	elif digit == "5":
-		ipBinary = ipBinary + five
-	elif digit == "6":
-		ipBinary = ipBinary + six
-	elif digit == "7":
-		ipBinary = ipBinary + seven
-	elif digit == "8":
-		ipBinary = ipBinary + eight
-	elif digit == "9":
-		ipBinary = ipBinary + nine
+	if digit.isdigit():
+		ipBinary += digits[digit]
 	elif digit == ".":
 		ipBinary = ipBinary + dot
 
 #if the IP isn't long enough to fill the display then add red squares
-Y= [255,0,0]
-blank = [Y,Y,Y,Y]
 while len(ipBinary)<64:
 	ipBinary = ipBinary + blank
 	
 sense.set_pixels(ipBinary)
+
+#Display this on the sense hat display for 30 seconds
 time.sleep(30)
-
-reset = [
-N,N,N,N,N,N,N,N,
-N,N,N,N,N,N,N,N,
-N,N,N,N,N,N,N,N,
-N,N,N,N,N,N,N,N,
-N,N,N,N,N,N,N,N,
-N,N,N,N,N,N,N,N,
-N,N,N,N,N,N,N,N,
-N,N,N,N,N,N,N,N
-]
-sense.set_pixels(reset)
-
-
-
-
+sense.clear()
