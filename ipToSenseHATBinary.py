@@ -46,7 +46,7 @@ s.close()
 #find the right binary digit to match the decimal
 for digit in ipArray:
 	if digit.isdigit():
-		ipBinary += digits[digit]
+		ipBinary += digits[int(digit)]
 	elif digit == ".":
 		ipBinary = ipBinary + dot
 
